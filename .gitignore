@@ -1,0 +1,6 @@
+media
+migrations/versions
+src/.env
+.env
+.venv
+.idea

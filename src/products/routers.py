@@ -7,9 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import JSONResponse
 from .schemas import ProductRead, ProductCreateForm, ProductFilter, CategoryRead, GenderEnum, ProductSpecificationCreate
 from .repository import ProductCategoryRepository, ProductRepository
-from ..unit_of_work import UnitOfWork, unit_of_work
-from ..configs import MEDIA_DIR
-from ..utils import save_image
+from ..unit_of_work import UnitOfWork, get_async_session
+from ..utils import save_image, delete_image
 import os
 
 from starlette import status
@@ -19,16 +18,17 @@ products_router = APIRouter(
 )
 
 
-@products_router.get("/categories", response_model=list[CategoryRead| None])
-async def get_categories():
+@products_router.get("/categories/{_id}", response_model=CategoryRead)
+async def get_category(_id: int):
     async with UnitOfWork() as session:
         repository = ProductCategoryRepository(session.session)
-        categories = await repository.list()
-    return categories
+        category = await repository.get(_id)
+        return category.model_validate(CategoryRead)
 
 
 @products_router.post("/categories", response_model=CategoryRead)
 async def create_category(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
     file: Annotated[UploadFile | None, File()],
     name: str = Form(...),
 
@@ -36,21 +36,30 @@ async def create_category(
     image_path = None
     if file:
         image_path = await save_image("categories", file)
-    async with UnitOfWork() as session:
-        repository = ProductCategoryRepository(session.session)
-        category = await repository.create({
-            "name": name,
-            "image": image_path
-        })
+    repository = ProductCategoryRepository(session)
+    category = await repository.create({
+        "name": name,
+        "image": image_path
+    })
+    try:
+        await session.commit()
+        await session.flush()
+    except Exception as e:
+        await session.rollback()
+        await delete_image(image_path)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"details: {e}"
+        )
     return category
 
 
-@products_router.get("/categories/{_id}", response_model=CategoryRead)
-async def get_category(_id: int):
+@products_router.get("/categories", response_model=list[CategoryRead| None])
+async def get_categories():
     async with UnitOfWork() as session:
         repository = ProductCategoryRepository(session.session)
-        category = await repository.get(_id)
-        return category.model_validate(CategoryRead)
+        categories = await repository.list()
+    return categories
 
 
 @products_router.put("/categories/{id}", response_model=CategoryRead)

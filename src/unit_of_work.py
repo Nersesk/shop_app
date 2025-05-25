@@ -1,24 +1,18 @@
+from contextlib import asynccontextmanager
+
 from .configs import settings
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 
-async def unit_of_work():
+async def get_async_session():
     engine = create_async_engine(settings.DATABASE_URL_asyncpg)
     session_maker = async_sessionmaker(
         bind=engine,
         class_=AsyncSession,
         expire_on_commit=False,
     )
-    session: AsyncSession = session_maker()
-    try:
-        yield session
-        await session.commit()
-    except Exception as e:
-        await session.rollback()
-    finally:
-        await session.close()
-
-
+    session = session_maker()
+    yield session
 
 class UnitOfWork:
     def __init__(self):

@@ -21,7 +21,7 @@ async def save_image(folder_name, file) ->str:
 
 async def delete_image(image_path):
     if not str(image_path).startswith("media"):
-        raise HTTPException(status_code=400, detail="Invalid image path")
+        return
 
     full_path = os.path.join(pathlib.Path(MEDIA_DIR).parent, image_path)
 

@@ -106,6 +106,8 @@ class ProductRepository(Repository):
                 selectinload(Product.images),
                 selectinload(Product.specifications)
             )
+            .offset(filters.offset)
+            .limit(filters.limit)
         )
 
         conditions = []

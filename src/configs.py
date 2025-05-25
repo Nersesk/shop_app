@@ -28,6 +28,19 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file= os.path.join(Path(__file__).resolve().parent, '.env') ,extra="ignore")
 
-settings = Settings()
+class TestSettings(BaseSettings):
+    TEST_DB_HOST: str
+    TEST_DB_PORT: int
+    TEST_DB_USER: str
+    TEST_DB_PASS: str
+    TEST_DB_NAME: str
 
+    @property
+    def DATABASE_URL_asyncpg(self):
+        return f"postgresql+asyncpg://{self.TEST_DB_USER}:{self.TEST_DB_PASS}@{self.TEST_DB_HOST}:{self.TEST_DB_PORT}/{self.TEST_DB_NAME}"
+    model_config = SettingsConfigDict(env_file= os.path.join(Path(__file__).resolve().parent, '.env') ,extra="ignore")
+
+
+settings = Settings()
+tmp_settings = TestSettings()
 print(MEDIA_DIR)

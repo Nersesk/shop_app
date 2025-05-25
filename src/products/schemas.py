@@ -92,5 +92,7 @@ class ProductFilter(BaseModel):
     min_price: Optional[float] = Field(None, ge=0)  # Minimum price, must be >= 0
     max_price: Optional[float] = Field(None, ge=0)  # Maximum price, must be >= 0
     search: Optional[str] = None
+    offset: Optional[int] = Field(default=0, ge=0)
+    limit: Optional[int] = Field(default=20, ge=1, le=100)
 
     model_config = ConfigDict(from_attributes=True)

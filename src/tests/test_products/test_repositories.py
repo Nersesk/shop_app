@@ -16,7 +16,7 @@ test_product_data  = {
         "description": "some_test_description",
         "price": "50",
         "gender": GenderEnum.man,
-    }
+}
 
 async def create_test_category(session: AsyncSession,
                                cat_repository: ProductCategoryRepository,

@@ -34,7 +34,7 @@ class Product(Base, TimestampMixin):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(String(1000))
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    category_id: Mapped[int] = mapped_column(ForeignKey('category.id', ondelete="SET NULL"),
+    category_id: Mapped[int| None] = mapped_column(ForeignKey('category.id', ondelete="SET NULL"),
                                              )
 
     gender: Mapped[GenderEnum] = mapped_column(Enum(GenderEnum), nullable=False, default=GenderEnum.UNISEX)

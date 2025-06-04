@@ -119,6 +119,20 @@ dev = ["cogapp", "pre-commit", "pytest", "wheel"]
 tests = ["pytest"]
 
 [[package]]
+name = "asgiref"
+version = "3.8.1"
+description = "ASGI specs, helper code, and adapters"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "asgiref-3.8.1-py3-none-any.whl", hash = "sha256:3e1e3ecc849832fe52ccf2cb6686b7a55f82bb1d6aee72a58826471390335e47"},
+    {file = "asgiref-3.8.1.tar.gz", hash = "sha256:c343bd80a0bec947a9860adb4c432ffa7db769836c64238fc34bdc3fec84d590"},
+]
+
+[package.extras]
+tests = ["mypy (>=0.800)", "pytest", "pytest-asyncio"]
+
+[[package]]
 name = "asyncpg"
 version = "0.30.0"
 description = "An asyncio PostgreSQL driver"
@@ -451,6 +465,31 @@ files = [
 [package.dependencies]
 dnspython = ">=2.0.0"
 idna = ">=2.0.0"
+
+[[package]]
+name = "fastadmin"
+version = "0.2.22"
+description = "FastAdmin is an easy-to-use Admin Dashboard App for FastAPI/Flask/Django inspired by Django Admin."
+optional = false
+python-versions = "<4.0,>=3.10"
+files = [
+    {file = "fastadmin-0.2.22-py3-none-any.whl", hash = "sha256:4e8e1341a5097d9da7f2a8c5b925de8bf16253822e7b857a5d430d3b026251b8"},
+    {file = "fastadmin-0.2.22.tar.gz", hash = "sha256:51703a9e0a892ce2baeceb43cafef7f5ecbbc70ee17dd3f93f25277f81bdcbe0"},
+]
+
+[package.dependencies]
+asgiref = ">=3.7.0,<4.0.0"
+fastapi = {version = "==0.*", optional = true, markers = "extra == \"fastapi\""}
+pyjwt = ">=2.6.0,<3.0.0"
+sqlalchemy = {version = "==2.*", extras = ["asyncio"], optional = true, markers = "extra == \"sqlalchemy\""}
+
+[package.extras]
+django = ["django (==5.*)"]
+fastapi = ["fastapi (==0.*)"]
+flask = ["flask (==3.*)"]
+pony = ["pony (==0.*)"]
+sqlalchemy = ["sqlalchemy[asyncio] (==2.*)"]
+tortoise-orm = ["tortoise-orm (==0.*)"]
 
 [[package]]
 name = "fastapi"
@@ -1722,4 +1761,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.13"
-content-hash = "79b6309859bec8597f4a4828e7e34c91714177f377d8685ce1cc312bde4019be"
+content-hash = "50864e9c7810c7bd20c992a500af83f1ede7c5f93a0f56a32ab30f096432d50d"

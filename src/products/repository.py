@@ -32,7 +32,7 @@ class ProductCategoryRepository(Repository):
 
 
     async def list(self):
-        results =  await self.session.execute(select(Category))
+        results =  await self.session.execute(select(Category).order_by(Category.id))
         categories = results.scalars().all()
         return [CategoryRead.model_validate(cat) for cat in categories]
 

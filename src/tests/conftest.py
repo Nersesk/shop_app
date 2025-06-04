@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from src.configs import tmp_settings
 from src.products.models import Base
 from ..main import app
-from ..unit_of_work import get_async_session
+from ..session_create import get_async_session
 
 engine_test = create_async_engine(tmp_settings.DATABASE_URL_asyncpg, poolclass=NullPool)
 async_session_maker = async_sessionmaker(engine_test, expire_on_commit=False)
@@ -19,6 +19,17 @@ Base.metadata.bind = engine_test
 async def session():
     async with async_session_maker() as session:
         yield session
+
+# Override FastAPI dependency before tests run
+@pytest_asyncio.fixture(autouse=True, scope="session")
+def override_get_async_session():
+    async def _override():
+        async with async_session_maker() as session:
+            yield session
+    app.dependency_overrides[get_async_session] = _override
+    yield
+    app.dependency_overrides.clear()
+
 
 @pytest_asyncio.fixture(autouse=True, scope='session')
 async def prepare_database():
